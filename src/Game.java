@@ -2,10 +2,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    public static final int WAIT_TIME = 3000;
+
     public static void main(String[] args) {
         List<Integer> userNumbers = new ArrayList<>();
         List<Integer> lottoNumbers = new ArrayList<>();
-        FileMethods fileMethods = new FileMethods();
+
 
         boolean exit = false;
         do {
@@ -16,23 +18,25 @@ public class Game {
                     break;
                 case 2:
                     lottoNumbers = LottoNumbers.chooseSix();
-                    fileMethods.saveToFile(lottoNumbers);
+                    FileMethods.saveToFile(lottoNumbers);
                     LottoNumbers.showMustGoOn();
                     break;
                 case 3:
                     System.out.println("Twoje liczby: " + userNumbers);
-                    LottoNumbers.stopProgram(3000);
+                    // Tak powinienes zaimplementować to czekanie w aplikacji. To fajny motyw, ale przy testowaniu koszmarny :P Gdybyś dodał wszędzie ta zmienną
+                    // zamiast 3000 z ręki, jedną zmianą mógłbyś właczać/wyłacząc czekanie :)
+                    LottoNumbers.stopProgram(WAIT_TIME);
                     System.out.println("Wylosowane liczby: " + lottoNumbers);
                     LottoNumbers.stopProgram(3000);
                     Menu.showResults(userNumbers, lottoNumbers);
                     LottoNumbers.stopProgram(3000);
                     break;
                 case 4:
-                    fileMethods.printHistory();
+                    FileMethods.printHistory();
                     LottoNumbers.stopProgram(3000);
                     break;
                 case 5:
-                    fileMethods.deleteHistory();
+                    FileMethods.deleteHistory();
                     LottoNumbers.stopProgram(3000);
                     break;
                 case 6:

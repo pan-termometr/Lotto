@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -9,6 +10,8 @@ public class LottoNumbers {
     static List<Integer> lottoNumbers = new ArrayList<>();
 
     public static List<Integer> chooseSix() {
+        // Ciekawy sposób. Takim podstawowym sposobem na losowanie liczby z zakresu 1-49 jest:
+        // ThreadLocalRandom.current().nextInt(0, 50)
         List<Integer> lottoNumbers =
                 IntStream.range(1, 49)
                         .boxed()

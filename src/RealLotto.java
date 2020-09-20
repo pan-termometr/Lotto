@@ -3,16 +3,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Scanner;
 
 public class RealLotto {
 
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
     public static void realLottoMenu() {
         printOption();
         switch (Menu.getUserChoice()) {
             case 1:
-                String userDate = getDateFromUser();
+                LocalDate userDate = getDateFromUser();
                 boolean lotteryInUserDateExists = printResultsFromThisDate(userDate);
                 if (!lotteryInUserDateExists) {
 
@@ -37,13 +41,14 @@ public class RealLotto {
                                 "\n3. Powrót");
     }
 
-    private static String getDateFromUser() {
+    //Dlaczego nie przechowywac daty podanej przez użytkownika poprostu jako LocalDate ? Rozwiazuje to potem duzo problemów z parsowaniem/dodawaniem dni
+    private static LocalDate getDateFromUser() {
         System.out.println("Historia dotyczy gier z zakresu: 27.01.1957 - 17.09.2020.");
-        String day = convertNumberToString(getNumberFromUser(0, 32, "dzień"));
-        String month = convertNumberToString(getNumberFromUser(0, 12, "miesiąc"));
-        String year = convertNumberToString(getNumberFromUser(1957, 2020, "rok"));
-        String fullDate = connectStrings(day, month, year);
-        return fullDate;
+        return LocalDate.of(
+                getNumberFromUser(1957, 2020, "rok"),
+                getNumberFromUser(0, 12, "miesiąc"),
+                getNumberFromUser(0, 32, "dzień")
+        );
     }
 
     private static int getNumberFromUser(int intMin, int intMax, String text) {
@@ -75,7 +80,7 @@ public class RealLotto {
         return fullDate;
     }
 
-    private static boolean printResultsFromThisDate(String userDate) {
+    private static boolean printResultsFromThisDate(LocalDate userDate) {
         String fileName = "Lotto.txt";
         try (
                 var fileReader = new FileReader(fileName);
@@ -84,7 +89,7 @@ public class RealLotto {
             String nextLine;
             do {
                 while ((nextLine = reader.readLine()) != null) {
-                    if (nextLine.contains(userDate)) {
+                    if (nextLine.contains(userDate.format(DTF))) {
                         System.out.println("Wyniki losowania z wybranego dnia: " + userDate + " to:" +
                                 nextLine.substring(nextLine.lastIndexOf(" ")));
                         LottoNumbers.stopProgram(2000);
@@ -100,41 +105,33 @@ public class RealLotto {
         return false;
     }
 
-    private static boolean findNextResult(String fullDate) {
+    private static boolean findNextResult(LocalDate fullDate) {
         boolean resultIsFound;
         int i = 1;
         do {
-            String newDate = getNextDate(fullDate, i);
+            LocalDate newDate = getNextDate(fullDate, i);
             resultIsFound = printResultFromNextFoundDate(newDate);
             i++;
             } while (!resultIsFound);
         return true;
     }
 
-    private static String getNextDate(String userDate, int i) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        Calendar c = Calendar.getInstance();
-        try{
-            c.setTime(sdf.parse(userDate));
-        } catch(ParseException e){
-            e.printStackTrace();
-        }
-        c.add(Calendar.DAY_OF_MONTH, i);
-        String newDate = sdf.format(c.getTime());
-        return newDate;
+    private static LocalDate getNextDate(LocalDate userDate, int i) {
+        return userDate.plusDays(i);
     }
 
-    private static boolean printResultFromNextFoundDate (String newDate) {
-        String fileName = "C:\\Users\\termo\\Downloads\\Lotto.txt";
+    private static boolean printResultFromNextFoundDate (LocalDate newDate) {
+        //Wiesz że u mnie na kompie nie ma folderu termo :D ? Wystraczy sama nazwa pliku, wtedy zaciąga go z projektowego folderu (najczęściej)
+//        String fileName = "C:\\Users\\termo\\Downloads\\Lotto.txt";
         try (
-                var fileReader = new FileReader(fileName);
+                //Mnie to var strasznie kłuje w oczy. Dynamiczne typowanie to hujowizna.
+                var fileReader = new FileReader("Lotto.txt");
                 var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
-            do {
+            // To jest podwójna pętla która sprawdza ten sam warunek
                 while ((nextLine = reader.readLine()) != null) {
-                    if (nextLine.contains(newDate)) {
+                    if (nextLine.contains(newDate.format(DTF))) {
                         System.out.println("Najbliższe losowanie odbyło się " + newDate + " i padły w nim następujące liczby:" +
                                 nextLine.substring(nextLine.lastIndexOf(" ")));
                         LottoNumbers.stopProgram(2000);
@@ -143,7 +140,6 @@ public class RealLotto {
                         return true;
                     }
                 }
-            } while (nextLine!=null);
         } catch (IOException e) {
             e.printStackTrace();
         }

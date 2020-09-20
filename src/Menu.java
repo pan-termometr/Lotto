@@ -1,6 +1,11 @@
 import java.util.*;
 
 public class Menu {
+
+    private Menu() {
+        // W klasie typu "utility" czyli takiej która ma tylko statyczne metody, warto zrobić prywatny konstruktor, tak zeby nikt nie próbował zrobić jej instancji
+    }
+
     public static void printOption() {
         System.out.println("Menu:\n1. Obstaw liczby." +
                                 "\n2. Przeprowadź losowanie." +
@@ -20,7 +25,8 @@ public class Menu {
         Scanner sc = new Scanner(System.in);
         System.out.println("Podaj 6 liczb od 1 do 49 (oddziel je spacjami)");
         String userNumbersToSplit = sc.nextLine();
-        List<String> userNumbers = Arrays.asList(userNumbersToSplit.split(" "));
+        //To było niepotrzebne, mozesz iterować bo tablicy zamiast po liscie :)
+        String[] userNumbers = userNumbersToSplit.split(" ");
         ArrayList<Integer> userNumbersAsIntegers = new ArrayList<>(6);
         for (String s : userNumbers) userNumbersAsIntegers.add(Integer.valueOf(s));
         Collections.sort(userNumbersAsIntegers);
@@ -56,19 +62,12 @@ public class Menu {
         return choosenNumbers;
     }
 
-    public static void showResults(List lottoNumbers, List userNumbers) {
-        try {
-            int j = 0;
-            for (Object tmp : userNumbers) {
-                for (int i = 0; i < 6; i++) {
-                    if (tmp == lottoNumbers.get(i)) {
-                        j++;
-                    }
-                }
-            }
-            System.out.println("Trafiłeś " + j + " liczb");
-        } catch (IndexOutOfBoundsException ex) {
+    public static void showResults(List<Integer> lottoNumbers, List<Integer> userNumbers) {
+        if(lottoNumbers.size() < 6) {
             System.out.println("Obstaw najpierw liczby!");
+        } else {
+            // Krótszy sposób na policzenie tego, skoro robisz teraz lambdy itd. to pewnie znasz te rzeczy :)
+            System.out.println("Trafiłeś " + lottoNumbers.stream().filter(userNumbers::contains).count() + " liczb");
         }
     }
 }

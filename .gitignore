@@ -1,2 +1,7 @@
 # Project exclude paths
 /out/
+# Nie powinines dodawac do repozytorium pliku który jest edytowany przez program :)
+lottoHistory
+#To tez nie powinno być w git, bo to konfiguracja Intelij. Każdy ma swoją.
+.idea
+*.iml
