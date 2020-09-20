@@ -14,7 +14,7 @@ public class RealLotto {
             case 1:
                 String userDate = getDateFromUser();
                 boolean lotteryInUserDateExists = printResultsFromThisDate(userDate);
-                if (lotteryInUserDateExists == false) {
+                if (!lotteryInUserDateExists) {
 
                     System.out.println("W podanym dniu nie odbyło się losowanie");
                     LottoNumbers.stopProgram(2000);
@@ -28,7 +28,6 @@ public class RealLotto {
                 System.out.println("Chuj Cie wie jak to policzyć");
                 break;
             case 3:
-                return;
         }
     }
 
@@ -77,10 +76,10 @@ public class RealLotto {
     }
 
     private static boolean printResultsFromThisDate(String userDate) {
-        String fileName = "C:\\Users\\termo\\Downloads\\Lotto.txt";
+        String fileName = "Lotto.txt";
         try (
                 var fileReader = new FileReader(fileName);
-                var reader = new BufferedReader(fileReader);
+                var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
             do {
@@ -95,7 +94,6 @@ public class RealLotto {
                     }
                 }
             } while (nextLine != null);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,7 +129,7 @@ public class RealLotto {
         String fileName = "C:\\Users\\termo\\Downloads\\Lotto.txt";
         try (
                 var fileReader = new FileReader(fileName);
-                var reader = new BufferedReader(fileReader);
+                var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
             do {
